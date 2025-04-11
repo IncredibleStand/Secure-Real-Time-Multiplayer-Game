@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <title>Secure Real-Time Multiplayer Game</title>
     <meta
@@ -19,14 +19,30 @@
     </header>
     <hr style="margin: 25px" />
     <div class="container">
+      <div class="game-header">
+        <span>Controls: WASD</span>
+        <span>COIN RACE</span>
+        <span id="player-score">Score: 0</span>
+        <span id="player-rank">Rank: 1/1</span>
+      </div>
       <canvas 
         ref="game"
-        id="game-window" 
+        id="game-canvas" 
         width="640" 
         height="480"
       >
       </canvas>
+      <div class="touch-controls">
+        <div class="d-pad">
+          <button id="up-btn" class="d-pad-btn">↑</button>
+          <div class="d-pad-middle">
+            <button id="left-btn" class="d-pad-btn">←</button>
+            <button id="right-btn" class="d-pad-btn">→</button>
+          </div>
+          <button id="down-btn" class="d-pad-btn">↓</button>
+        </div>
+      </div>
     </div>
+    <script src="../public/game.mjs" type="module"></script>
   </body>
-  <script src="../public/game.mjs" type="module"></script>
 </html>
