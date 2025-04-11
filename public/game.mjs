@@ -7,12 +7,6 @@ const ctx = canvas.getContext('2d', { alpha: false });
 const playerScoreEl = document.getElementById('player-score');
 const playerRankEl = document.getElementById('player-rank');
 
-// Touch control buttons
-const upBtn = document.getElementById('up-btn');
-const downBtn = document.getElementById('down-btn');
-const leftBtn = document.getElementById('left-btn');
-const rightBtn = document.getElementById('right-btn');
-
 // Game variables
 const socket = io();
 let currentPlayer;
@@ -35,21 +29,23 @@ const BASE_HEIGHT = 480;
 let scale = 1;
 
 const resizeCanvas = () => {
-  const maxWidth = window.innerWidth - 40;
-  const maxHeight = window.innerHeight - 150;
+  const maxWidth = window.innerWidth - 40; // Account for body margin (20px on each side)
+  const maxHeight = window.innerHeight - 150; // Account for header and UI space
   const widthScale = maxWidth / BASE_WIDTH;
   const heightScale = maxHeight / BASE_HEIGHT;
-  scale = Math.min(widthScale, heightScale, 1);
+  scale = Math.min(widthScale, heightScale, 1); // Don't scale up, only down
 
   canvas.width = BASE_WIDTH * scale;
   canvas.height = BASE_HEIGHT * scale;
   canvas.style.width = `${canvas.width}px`;
   canvas.style.height = `${canvas.height}px`;
 
-  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  // Scale the context to match the new size
+  ctx.setTransform(1, 0, 0, 1, 0, 0); // Reset transform
   ctx.scale(scale, scale);
 };
 
+// Call resize initially and on window resize
 resizeCanvas();
 window.addEventListener('resize', resizeCanvas);
 
@@ -60,8 +56,8 @@ const keys = {
   s: false,
   d: false
 };
-const BASE_MOVE_SPEED = 300;
-let MOVE_SPEED = BASE_MOVE_SPEED;
+const BASE_MOVE_SPEED = 300; // Base speed in pixels per second
+let MOVE_SPEED = BASE_MOVE_SPEED; // Adjusted speed based on scale
 let lastTime = performance.now();
 let pulse = 0;
 
@@ -70,7 +66,7 @@ const stars = [];
 const numStars = 50;
 for (let i = 0; i < numStars; i++) {
   stars.push({
-    x: Math.random() * BASE_WIDTH,
+    x: Math.random() * BASE_WIDTH, // Use base dimensions
     y: Math.random() * BASE_HEIGHT,
     radius: Math.random() * 1.5,
   });
@@ -93,7 +89,10 @@ const gameLoop = (currentTime) => {
   const deltaTime = (currentTime - lastTime) / 1000;
   lastTime = currentTime;
 
+  // Update pulse for glow effect
   pulse = 10 + Math.sin(currentTime * 0.005) * 5;
+
+  // Update MOVE_SPEED based on scale
   MOVE_SPEED = BASE_MOVE_SPEED * scale;
 
   updatePlayerPosition(deltaTime);
@@ -207,9 +206,8 @@ const drawCollectible = (collectible) => {
   }
 };
 
-// Set up keyboard and touch event listeners
+// Set up keyboard event listeners
 const setupEventListeners = () => {
-  // Keyboard controls
   document.addEventListener('keydown', (e) => {
     switch (e.key) {
       case 'w':
@@ -258,21 +256,6 @@ const setupEventListeners = () => {
         keys.d = false;
         break;
     }
-  });
-
-  // Touch controls
-  upBtn.addEventListener('touchstart', () => { keys.w = true; });
-  upBtn.addEventListener('touchend', () => { keys.w = false; });
-  downBtn.addEventListener('touchstart', () => { keys.s = true; });
-  downBtn.addEventListener('touchend', () => { keys.s = false; });
-  leftBtn.addEventListener('touchstart', () => { keys.a = true; });
-  leftBtn.addEventListener('touchend', () => { keys.a = false; });
-  rightBtn.addEventListener('touchstart', () => { keys.d = true; });
-  rightBtn.addEventListener('touchend', () => { keys.d = false; });
-
-  // Prevent default touch behavior to avoid scrolling
-  document.querySelector('.touch-controls').addEventListener('touchstart', (e) => {
-    e.preventDefault();
   });
 };
 
